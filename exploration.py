@@ -1,6 +1,6 @@
 """
-Prepares features for the ML application
-* Data exploration for the raw time series
+Prepares features for the ML application from the raw time series. 
+* Also produces some plots of the raw time series for feature hypothesis generation
 """
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -50,7 +50,7 @@ df = data_pull()
 # datasets.
 fig, ax = plt.subplots(1, 2)
 grps = df.groupby(["id", "label"])
-ct = [0, 0]
+ct = [0, 0]  # instance counter for the different groups
 for i, g in enumerate(grps.groups.keys()):
     dg = grps.get_group(g)
     if g[1] == True:
@@ -81,6 +81,7 @@ fig.show()
 
 
 def fft_based_features(dg):
+    print("working on FFT based feature for %s" % dg.name)
     f = FFTData(dg["value"].values)
     fft_index = FFTDataAboveIndex(f, 1)  # exclude f0
     weighted_fft = WeightedFFTData(dg["value"].values)
@@ -121,6 +122,7 @@ def regression_based_features(dg):
     varying sensitivity to outliers, then operating on the residual as
     a data distribution with respect to the fit. 
     """
+    print("working on regression based feature for %s" % dg.name)
     x = dg["date_increment"].values
     y = dg["value"].values
     reg = RegressionResidualData(x, y)
@@ -161,15 +163,17 @@ def regression_based_features(dg):
     return pd.Series(retval, index=labels)
 
 
-# apply features
+# apply features in turn
 fft_out = df.groupby("id", as_index=False).apply(fft_based_features)
 regression_out = df.groupby("id", as_index=False).apply(
     regression_based_features)
 
-# add labels, join all results
+# add labels, join all results, save to file for next stage.
 labels = pd.read_csv("challenge-labels.csv")
 all_features = pd.merge(fft_out, labels, "left", left_on="id", right_on="id")
 all_features = pd.merge(all_features, regression_out,
                         "left", left_on="id", right_on="id")
 all_features["label"] = all_features["label"].astype(int)
-all_features.to_csv("features.csv")
+filename = "features.csv"
+all_features.to_csv(filename)
+print(f"saved features in {filename}")

@@ -6,12 +6,16 @@
         \usepackage{fullpage}
         \usepackage{hyperref}
         \usepackage{subfig}
+\usepackage[T1]{fontenc}
+\usepackage{cprotect}
+\usepackage[depth=4]{bookmark}
 
 
 \begin{document}
 
+\tableofcontents
 \section{Executive Summary}
-This report analyzes the data collected in the data challenge files for signal being `Noisy' or `non-Noisy'. We find that a Logistic Regression classifier is able to obtain 0.87 AUC with 8 features. Tuning the classifier's decision threshold may be used to operate in different regimes, in this example we have chosen to operate at maximum balanced accuracy by using a decision threshold of 0.46.
+This report analyzes the data collected in the data challenge files for signal being `Noisy' or `non-Noisy'. We find that a Logistic Regression classifier is able to obtain 0.89 AUC with 8 features. Tuning the classifier's decision threshold may be used to operate in different regimes, in this example we have chosen to operate at maximum balanced accuracy by using a decision threshold of 0.39.
 
 \begin{enumerate}
 \item{Data sources: CSV files given as part of challenge, with labeled time series data. }
@@ -47,7 +51,7 @@ These basic remappings of the data are then collapsed further by a variety of me
 
 \subsection{Feature selection}
 By producing combinations of features, such as algebraic combinations of features, more features are generated than we have data for. Therefore, feature selection will be an important aspect of the project. All things being equal, we prefer to use fewer features in the final model. In the final findings, we present a combination of individual and product features, then use Sequential Backward Selection to map out the behavior of the model to the test data. This is done by executing the file \verb|ml_sbs.py|. We use the Logistic Regression Classifier in the SBS algorithm. The final performance point is shown in the right hand side of figure \ref{fig:sbs}. 
-The resulting features list is the following, which gives an average ROC AUC score of 0.87.
+The resulting features list is the following, which gives an average ROC AUC score of 0.89.
 \begin{enumerate}
 \item{Signal concentration in the upper tail $>$ 0.25, RANSAC Regressor Residual}
 \item{Signal concentration in the upper tail $>$ 0.01, Linear Regressor Residual}
@@ -59,16 +63,16 @@ The resulting features list is the following, which gives an average ROC AUC sco
 \item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.01, Linear Regressor residual)}
 \end{enumerate}
 
-\paragraph{Comment} When the backward selection algorithm is taken all the way to one feature, the following single feature has a cross validation scores (ROC-AUC) of 0.66. 
+\paragraph{Comment} When the backward selection algorithm is taken all the way to one feature, the following single feature has a cross validation scores (ROC-AUC) of 0.76. 
 \begin{enumerate}
-\item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.05, Theil-Sen Regressor residual)}
+\item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.01, Regression residual)}
 \end{enumerate}
 
 
 \begin{figure}
 \centering
 \includegraphics[width=1\textwidth]{ml_sbs_avg_score_products.png}
-\caption{Sequential Backward Selection curves from the large list (132 features) down to 1 feature. We pick the point with 8 features as the point to operate the classifier. }
+\caption{Sequential Backward Selection curves from the large list (137 features) down to 1 feature. We pick the point with 8 features as the point to operate the classifier. }
 \label{fig:sbs}
 \end{figure}
 \section{Model performance}
@@ -99,8 +103,8 @@ In this report we have taken the data challenge time series data set through a b
 \end{figure}
 \begin{figure}[ht]
 \centering
-\subfloat[Performance curves for Logisic Regression Classifier and the operating point at decision threshold 0.46 is highlighted. ]{\label{fig:performance}\includegraphics[height=6cm]{performance.png}}\hfill
-\subfloat[ROC curve for Logistic Regression Classifier, and the operating point at decision threshold 0.46 is highlighted.]{\label{fig:roc}\includegraphics[height=6cm]{ROC.png}}\\
+\subfloat[Performance curves for Logisic Regression Classifier and the operating point at decision threshold 0.39 is highlighted. ]{\label{fig:performance}\includegraphics[height=6cm]{performance.png}}\hfill
+\subfloat[ROC curve for Logistic Regression Classifier, and the operating point at decision threshold 0.39 is highlighted.]{\label{fig:roc}\includegraphics[height=6cm]{ROC.png}}\\
 
 \caption{Performance comparison charts vs decision threshold. The operating point is taken at the point of maximum balanced accuracy}
 \end{figure}
@@ -108,7 +112,7 @@ In this report we have taken the data challenge time series data set through a b
 \begin{figure}[ht]
 \centering
 \subfloat[Random classifier (weighed by class proportion)]{\label{fig:random}\includegraphics[height=6cm]{cm_random.png}}\hfill
-\subfloat[Logistic regression classifier operating at decision threshold 0.46]{\label{fig:tuned}\includegraphics[height=6cm]{cm_tuned.png}}\\
+\subfloat[Logistic regression classifier operating at decision threshold 0.39]{\label{fig:tuned}\includegraphics[height=6cm]{cm_tuned.png}}\\
 
 \caption{ROC comparison}
 \end{figure}

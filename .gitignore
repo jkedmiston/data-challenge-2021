@@ -3,3 +3,6 @@
 *.out
 *~
 src/
+*.toc
+__pycache__
+*logtxt

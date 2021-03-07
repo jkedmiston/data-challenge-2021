@@ -22,8 +22,12 @@ obj.preamble = r"""
         \usepackage{fullpage}
         \usepackage{hyperref}
         \usepackage{subfig}
+\usepackage[T1]{fontenc}
+\usepackage{cprotect}
+\usepackage[depth=4]{bookmark}
 """
 obj.add_contents(r"""
+\tableofcontents
 \section{Executive Summary}
 This report analyzes the data collected in the data challenge files for signal being `Noisy' or `non-Noisy'. We find that a Logistic Regression classifier is able to obtain %(best_roc_auc_score)s AUC with %(nfeatures)s features. Tuning the classifier's decision threshold may be used to operate in different regimes, in this example we have chosen to operate at maximum balanced accuracy by using a decision threshold of %(decision_threshold)s.
 
@@ -36,7 +40,7 @@ This report analyzes the data collected in the data challenge files for signal b
 
 obj.add_contents(r"""
 \section{Data exploration}
-To begin, the data exploration component consists largely of visual inspection of the datasets time series results to generate ideas for feature generation. One finding here to flag is that we find that the labeling appears visually to be not very different between the positive and negative labels. That is, time series information is often qualitatively the same between the two channels when viewed as a normalized time series. In addition, the nature of the positive labels appears to be different from that demonstrated in the initial problem statement, see \ref{fig:spikes}. In Figure \ref{fig:exploration} we see a visual comparison of the two classes, after min-max normalization. The vertical offset is simply to better visualize independent charts. 
+To begin, the data exploration component consists largely of visual inspection of the datasets time series results to generate ideas for feature generation. One finding here to flag is that we find that the labeling appears visually to be not very different between the positive and negative labels. That is, time series information is often qualitatively the same between the two channels when viewed as a normalized time series. In addition, the nature of the positive labels appears to be different from that demonstrated in the initial problem statement, see Figure \ref{fig:spikes}, compared to the exporation plots in Figure \ref{fig:exploration}. In Figure \ref{fig:exploration} we see a visual comparison of the two classes, after min-max normalization. The vertical offset is simply to better visualize independent charts. 
 """)
 obj.add_clearpage()
 obj.add_figure("spikes.png", label="spikes",
@@ -67,14 +71,14 @@ The resulting features list is the following, which gives an average ROC AUC sco
 \item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.01, Linear Regressor residual)}
 \end{enumerate}
 
-\paragraph{Comment} When the backward selection algorithm is taken all the way to one feature, the following single feature has a cross validation scores (ROC-AUC) of 0.66. 
+\paragraph{Comment} When the backward selection algorithm is taken all the way to one feature, the following single feature has a cross validation scores (ROC-AUC) of 0.76. 
 \begin{enumerate}
-\item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.05, Theil-Sen Regressor residual)}
+\item{Ratio(Signal concentration in lower tail $<$ 0.2, Weighted FFT, Signal concentration in lower tail $<$ 0.01, Regression residual)}
 \end{enumerate}
 """ % dict(best_roc_auc_score=best_roc_auc_score)
 )
 obj.add_figure("ml_sbs_avg_score_products.png", label="sbs",
-               caption="Sequential Backward Selection curves from the large list (132 features) down to 1 feature. We pick the point with %(nfeatures)s features as the point to operate the classifier. " % dict(nfeatures=nfeatures))
+               caption="Sequential Backward Selection curves from the large list (137 features) down to 1 feature. We pick the point with %(nfeatures)s features as the point to operate the classifier. " % dict(nfeatures=nfeatures))
 
 obj.add_contents(r"""\section{Model performance}
 In this section we look at final tuning and detailed performance of the Logistic Regression classifier used in the SBS feature selection algorithm. Using the raw feature crunching from \verb|exploration.py| $\rightarrow$ \verb|features.csv| and the feature list from the SBS algorithm \verb|ml_sbs.py| $\rightarrow$ \verb|final_columns.csv|, we execute the final training and evaluate performance on the test set. 
