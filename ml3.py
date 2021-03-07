@@ -1,3 +1,6 @@
+"""
+Perform sequential backward selection on the initial feature list 
+"""
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from mlxtend.feature_selection import ExhaustiveFeatureSelector as EFS
 from sklearn.preprocessing import StandardScaler
@@ -41,8 +44,14 @@ df = pd.read_csv("out1.csv", index_col=0)
 excluded_columns = ["id", "label"]
 columns = list(set(df.columns) - set(excluded_columns))
 original_columns = columns[:]
-columns = ['UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData', 'LowerTailFraction_sort_False_cutoff_0.05__WeightedFFTData', 'UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData', 'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData',
-           'LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData', 'LowerTailFraction_sort_True_cutoff_0.25__TheilSenRegressorData', 'LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'UpperTailFraction_sort_True_cutoff_0.01__TheilSenRegressorData']
+columns = ['UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData',
+           'LowerTailFraction_sort_False_cutoff_0.05__WeightedFFTData',
+           'UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData',
+           'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData',
+           'LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData',
+           'LowerTailFraction_sort_True_cutoff_0.25__TheilSenRegressorData',
+           'LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData',
+           'UpperTailFraction_sort_True_cutoff_0.01__TheilSenRegressorData']
 
 for i, c in enumerate(columns):
     for j, c2 in enumerate(columns[i+1:]):
@@ -223,7 +232,7 @@ a.set_xlabel("FPR")
 a.set_ylabel("TPR")
 f.show()
 
-f, a = plt.subplots(1, 1)
+
 ks = list(sfs1.subsets_.keys())
 ks.sort()
 marks = []
@@ -231,5 +240,22 @@ for k in ks:
     marks.append([k, sfs1.subsets_[k]["avg_score"]])
 
 marks = np.asarray(marks)
-a.plot(marks[:, 0], marks[:, 1], marker='o')
+f, a = plt.subplots(1, 2)
+a[0].plot(marks[:, 0], marks[:, 1], marker='o')
+a[1].plot(marks[:, 0][:20], marks[:, 1][:20], marker='o', markersize=4)
+a[0].set_ylabel("Avg. Score")
+a[1].set_ylabel("Avg. Score")
+a[0].set_xlabel("N features [backward selection]")
+a[1].set_xlabel("N features [backward selection]")
+a[1].scatter([8], [marks[marks[:, 0] == 8][0][1]],
+             s=50, facecolors='none', edgecolors='r')
+f.tight_layout()
+f.savefig("avg_score_products.png")
 f.show()
+sfs1.subsets_[25]
+[columns[i] for i in sfs1.subsets_[25]["feature_idx"]]
+columns = ['UpperTailFraction_sort_False_cutoff_0.10__FFTDataAboveIndex_idx1', 'LowerTailFraction_sort_False_cutoff_0.05__WeightedFFTData/LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData', 'UpperTailFraction_sort_False_cutoff_0.20__WeightedFFTData', 'UpperTailFraction_sort_True_cutoff_0.25__RegressionResidualData', 'std__RegressionResidualData', 'LowerTailFraction_sort_False_cutoff_0.05__WeightedFFTData*UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData', 'LowerTailFraction_sort_True_cutoff_0.25__RegressionResidualData', 'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData/LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData*LowerTailFraction_sort_True_cutoff_0.25__TheilSenRegressorData', 'UpperTailFraction_sort_False_cutoff_0.01__FFTDataAboveIndex_idx1', 'UpperTailFraction_sort_False_cutoff_0.01__WeightedFFTData', 'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData*LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData',
+           'skew__RANSACResidualDataSquared', 'skew__RegressionResidualData', 'skew__TheilSenRegressorData', 'kurtosis__RANSACResidualData', 'UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData/UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData', 'UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData/LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData', 'UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData*LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData', 'LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData*UpperTailFraction_sort_True_cutoff_0.01__TheilSenRegressorData', 'median__TheilSenRegressorData', 'UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData*LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'UpperTailFraction_sort_False_cutoff_0.20__FFTDataAboveIndex_idx1', 'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData*LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData']
+# 7
+col7 = ['LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData/LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData*LowerTailFraction_sort_True_cutoff_0.25__TheilSenRegressorData', 'skew__RegressionResidualData', 'UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData/UpperTailFraction_sort_True_cutoff_0.25__RANSACResidualData',
+        'LowerTailFraction_sort_True_cutoff_0.01__RegressionResidualData', 'UpperTailFraction_sort_True_cutoff_0.10__TheilSenRegressorData*UpperTailFraction_sort_True_cutoff_0.01__TheilSenRegressorData', 'LowerTailFraction_sort_False_cutoff_0.20__WeightedFFTData*LowerTailFraction_sort_True_cutoff_0.05__TheilSenRegressorData']  # 0.872

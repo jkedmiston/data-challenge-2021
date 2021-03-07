@@ -29,7 +29,7 @@ def logistic_adjust_threshold(model, x, decision_threshold=0.5):
 lr = LogisticRegression()
 # lr = RandomForestClassifier()
 # lr = CalibratedClassifierCV(base_estimator=lr, cv=3)
-df = pd.read_csv("out1.csv", index_col=0)
+df = pd.read_csv("features.csv", index_col=0)
 excluded_columns = ["id", "label"]
 columns = list(set(df.columns) - set(excluded_columns))
 
@@ -91,7 +91,8 @@ fig.show()
 
 y_pred = lr.predict(X_test)
 cm0 = confusion_matrix(y_test, y_pred)
-# ConfusionMatrixDisplay(cm).plot()
+ConfusionMatrixDisplay(cm0).plot()
+raise
 # https://scikit-learn.org/stable/auto_examples/miscellaneous/plot_display_object_visualization.html#sphx-glr-auto-examples-miscellaneous-plot-display-object-visualization-py
 # y_score = lr.decision_function(X_test)
 y_score = lr.predict_proba(X_test)[:, 1]

@@ -35,7 +35,7 @@ def logistic_adjust_threshold(model, x, decision_threshold=0.5):
 lr = LogisticRegression()
 # lr = RandomForestClassifier()
 # lr = CalibratedClassifierCV(base_estimator=lr, cv=3)
-df = pd.read_csv("out1.csv", index_col=0)
+df = pd.read_csv("features.csv", index_col=0)
 # cross product terms
 excluded_columns = ["id", "label"]
 columns = list(set(df.columns) - set(excluded_columns))
